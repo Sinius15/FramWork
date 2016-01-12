@@ -1,5 +1,7 @@
 package it.sijmen.webframework.framwork.routing;
 
+import it.sijmen.webframework.framwork.mvc.ControllerFunction;
+import it.sijmen.webframework.framwork.util.RegExE;
 import it.sijmen.webframework.webserver.Request;
 import it.sijmen.webframework.webserver.RequestType;
 
@@ -18,25 +20,18 @@ public class Route {
 
     private RequestType requestType;
 
-    private Class controller;
-    private Method method;
+    private ControllerFunction method;
 
-    public Route(String subdomain, String domain, String uri, RequestType requestType, Class controller, String method) {
+    public Route(String subdomain, String domain, String uri, RequestType requestType, ControllerFunction method) {
         this.subdomain = Router.normalize(subdomain);
         this.domain = Router.normalize(domain);
         this.uri = Router.normalize(uri);
 
         this.requestType = requestType;
-        this.controller = controller;
-
-        try {
-            this.method = controller.getMethod(method);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Route method not found");
-        }
+        this.method = method;
     }
 
-    public Method getMethod() {
+    public ControllerFunction getMethod() {
         return method;
     }
 
@@ -44,13 +39,13 @@ public class Route {
         if(request.getRequestType() != this.getRequestType())
             return false;
         if(this.domain != null)
-            if(!request.getDomain().matches(this.getDomain()))
+            if(!RegExE.matches(this.getDomain(), request.getDomain()))
                 return false;
         if(this.getSubdomain() != null)
-            if(!request.getSubdomain().matches(this.getSubdomain()))
+            if(!RegExE.matches(this.getSubdomain(), request.getSubdomain()))
                 return false;
         if(this.getUri() != null)
-            if(!request.getUriString().matches(this.getUri()))
+            if(!RegExE.matches(this.getUri(), request.getUriString()))
                 return false;
         return true;
     }
@@ -69,9 +64,5 @@ public class Route {
 
     public RequestType getRequestType() {
         return requestType;
-    }
-
-    public Class getController() {
-        return controller;
     }
 }

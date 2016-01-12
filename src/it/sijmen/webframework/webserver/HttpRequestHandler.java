@@ -23,7 +23,6 @@ public class HttpRequestHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        abort(httpExchange, 400, "invalid request");
 
         URI uri = httpExchange.getRequestURI();
         RequestType requestType = RequestType.fromString(httpExchange.getRequestMethod());
@@ -48,8 +47,15 @@ public class HttpRequestHandler implements HttpHandler {
         }
 
         Request request = new Request(domain, requestType, uri, headers);
+        Response response;
+        try{
+            response = framwork.handle(request);
+        }catch(Exception e){
+            e.printStackTrace();
+            abort(httpExchange, 500, "Framewokr could not handle request.");
+            return;
+        }
 
-        Response response = framwork.handle(request);
 
         String responseContent = response.render();
         httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
