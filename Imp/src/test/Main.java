@@ -1,4 +1,4 @@
-package it.sijmen.webframework;
+package test;
 
 import it.sijmen.webframework.webserver.WebServer;
 import test.TestFramework;
