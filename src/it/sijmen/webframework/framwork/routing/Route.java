@@ -2,56 +2,58 @@ package it.sijmen.webframework.framwork.routing;
 
 import it.sijmen.webframework.framwork.mvc.ControllerFunction;
 import it.sijmen.webframework.framwork.util.RegExE;
+import it.sijmen.webframework.framwork.util.StringUtil;
 import it.sijmen.webframework.webserver.Request;
 import it.sijmen.webframework.webserver.RequestType;
 
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * Created by Sijmen on 12-1-2016.
  */
 public class Route {
 
-    private String subdomain;
+    protected String domain;
 
-    private String domain;
+    protected String uri;
 
-    private String uri;
+    protected RequestType requestType;
 
-    private RequestType requestType;
+    protected ControllerFunction method;
 
-    private ControllerFunction method;
+    protected RouteFilter customFilter;
 
-    public Route(String subdomain, String domain, String uri, RequestType requestType, ControllerFunction method) {
-        this.subdomain = Router.normalize(subdomain);
-        this.domain = Router.normalize(domain);
-        this.uri = Router.normalize(uri);
+    public Route(String domain, String uri, RequestType requestType, RouteFilter filter, ControllerFunction method) {
+        this.domain = StringUtil.normalize(domain);
+        this.uri = StringUtil.normalize(uri);
 
         this.requestType = requestType;
         this.method = method;
-    }
-
-    public ControllerFunction getMethod() {
-        return method;
+        this.customFilter = filter;
     }
 
     public boolean accepts(Request request) {
-        if(request.getRequestType() != this.getRequestType())
-            return false;
+        if(this.getRequestType() != null)
+            if(request.getRequestType() != this.getRequestType())
+                return false;
         if(this.domain != null)
             if(!RegExE.matches(this.getDomain(), request.getDomain()))
-                return false;
-        if(this.getSubdomain() != null)
-            if(!RegExE.matches(this.getSubdomain(), request.getSubdomain()))
                 return false;
         if(this.getUri() != null)
             if(!RegExE.matches(this.getUri(), request.getUriString()))
                 return false;
+        if(customFilter != null)
+            if(!customFilter.accepts(request))
+                return false;
         return true;
     }
 
-    public String getSubdomain() {
-        return subdomain;
+    public RouteFilter getFilter() {
+        return customFilter;
+    }
+
+    public ControllerFunction getMethod() {
+        return method;
     }
 
     public String getDomain() {

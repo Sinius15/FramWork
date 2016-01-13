@@ -2,8 +2,8 @@ package it.sijmen.webframework.webserver;
 
 import com.sun.net.httpserver.Headers;
 import it.sijmen.webframework.framwork.routing.Route;
-import it.sijmen.webframework.framwork.routing.Router;
 import it.sijmen.webframework.framwork.util.RegExE;
+import it.sijmen.webframework.framwork.util.StringUtil;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -13,7 +13,6 @@ import java.util.HashMap;
  */
 public class Request {
 
-    private String subdomain;
     private String domain;
     private URI uri;
     private String uriString;
@@ -25,10 +24,10 @@ public class Request {
     private HashMap<String, String> urlParameters;
 
     public Request(String domain, RequestType requestType, URI uri, Headers headers) {
-        this.domain = Router.normalize(domain);
+        this.domain = StringUtil.normalize(domain);
         this.requestType = requestType;
         this.uri = uri;
-        this.uriString = Router.normalize(uri.toString());
+        this.uriString = StringUtil.normalize(uri.toString());
         this.headers = headers;
     }
 
@@ -72,10 +71,4 @@ public class Request {
     public Headers getHeaders() {
         return headers;
     }
-
-    public String getSubdomain() {
-        return subdomain;
-    }
-
-
 }

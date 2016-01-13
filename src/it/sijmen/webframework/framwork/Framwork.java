@@ -1,7 +1,7 @@
 package it.sijmen.webframework.framwork;
 
 import it.sijmen.webframework.framwork.routing.Route;
-import it.sijmen.webframework.framwork.routing.Router;
+import it.sijmen.webframework.framwork.routing.RouteGroup;
 import it.sijmen.webframework.webserver.Request;
 import it.sijmen.webframework.webserver.Response;
 
@@ -11,12 +11,13 @@ import it.sijmen.webframework.webserver.Response;
 public abstract class Framwork {
 
     public abstract void initControllers();
-    public abstract void initRoutes(Router router);
+    public abstract void initRoutes(RouteGroup router);
 
-    private Router router = new Router();
+    private RouteGroup router = new RouteGroup();
 
     public Framwork() {
         initControllers();
+        router.name("Root Router Group");
         initRoutes(router);
         router.finishSetup();
     }

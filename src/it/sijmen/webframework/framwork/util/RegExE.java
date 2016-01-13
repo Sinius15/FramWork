@@ -21,10 +21,12 @@ public class RegExE {
      * @return a hashmap with the keys from the template and the value from the value
      */
     public static HashMap<String, String> decodeNamedGroup(String template, String value){
+        if(template.equals(value))
+            return new HashMap<>();
+
         String cacheKey = template + "~|!" + value;
         if(cacheMap.containsKey(cacheKey))
             return cacheMap.get(cacheKey);
-        System.out.println("t: " + template + "\t v: " + value);
 
         HashMap<String, String> out = new HashMap<>();
 
