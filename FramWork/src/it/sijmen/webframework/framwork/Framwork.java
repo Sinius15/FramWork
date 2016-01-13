@@ -1,5 +1,7 @@
 package it.sijmen.webframework.framwork;
 
+import it.sijmen.webframework.framwork.database.DatabaseEngine;
+import it.sijmen.webframework.framwork.database.engines.MySqlEngine;
 import it.sijmen.webframework.framwork.routing.Route;
 import it.sijmen.webframework.framwork.routing.RouteGroup;
 import it.sijmen.webframework.webserver.Request;
@@ -10,13 +12,17 @@ import it.sijmen.webframework.webserver.Response;
  */
 public abstract class Framwork {
 
-    public abstract void initControllers();
+    public abstract void init();
     public abstract void initRoutes(RouteGroup router);
 
-    private RouteGroup router = new RouteGroup();
+    private RouteGroup router;
+    private DatabaseEngine engine;
 
     public Framwork() {
-        initControllers();
+        init();
+        if(engine == null)
+            engine = new MySqlEngine();
+        router = new RouteGroup();
         router.name("Root Router Group");
         initRoutes(router);
         router.finishSetup();
@@ -40,5 +46,9 @@ public abstract class Framwork {
 
     public Response abort(int statusCode, String message){
         return new Response(statusCode, message);
+    }
+
+    public void setDatabaseEngine(DatabaseEngine engine) {
+        this.engine = engine;
     }
 }
