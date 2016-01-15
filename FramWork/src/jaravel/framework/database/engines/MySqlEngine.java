@@ -1,8 +1,8 @@
 package jaravel.framework.database.engines;
 
-import jaravel.framework.database.DatabaseColumn;
+import jaravel.framework.database.scheme.DatabaseColumnScheme;
 import jaravel.framework.database.DatabaseEngine;
-import jaravel.framework.database.SelectQueryBuilder;
+import jaravel.framework.database.builder.SelectQueryBuilder;
 
 import java.util.StringJoiner;
 
@@ -22,14 +22,14 @@ public class MySqlEngine extends DatabaseEngine{
 
         StringJoiner joiner = new StringJoiner(",");
 
-        for(DatabaseColumn column : q.getSelectColumns())
+        for(DatabaseColumnScheme column : q.getSelectColumns())
             joiner.add(leftEscape + column.getName() + rightEscape);
 
         builder.append(joiner);
 
         builder.append(" FROM ");
         builder.append(leftEscape);
-        builder.append(q.getTable());
+        builder.append(q.getTable().getName());
         builder.append(rightEscape);
 
         return builder.toString();

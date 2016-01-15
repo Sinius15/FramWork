@@ -1,7 +1,10 @@
 package jaravel.example;
 
 import jaravel.framework.Jaravel;
+import jaravel.framework.database.connectors.JDBCConnector;
 import jaravel.framework.routing.RouteGroup;
+
+import java.io.IOException;
 
 /**
  * Created by Sijmen on 12-1-2016.
@@ -11,6 +14,12 @@ public class TestFramework extends Jaravel {
     @Override
     public void init() {
         System.out.println("Initialized FramWork");
+        try {
+            connection = new JDBCConnector("com.mysql.jdbc.Driver");
+            connection.connect("jdbc:mysql://localhost:3306/test?user=tester&password=123456&useSSL=false");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

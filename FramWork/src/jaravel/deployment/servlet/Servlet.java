@@ -54,8 +54,7 @@ public class Servlet extends HttpServlet {
 
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void handle(HttpServletRequest req, HttpServletResponse resp, RequestType get) throws IOException {
         String domain = req.getServerName() + (req.getServerPort() != 80 ? ":" + req.getServerPort() : "");
 
         HashMap<String, String> headers = new HashMap<>();
@@ -85,32 +84,37 @@ public class Servlet extends HttpServlet {
     }
 
     @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        this.handle(req, resp, RequestType.GET);
+    }
+
+    @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doDelete(req, resp);
+        this.handle(req, resp, RequestType.DELETE);
     }
 
     @Override
     protected void doHead(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doHead(req, resp);
+        this.handle(req, resp, RequestType.HEAD);
     }
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doOptions(req, resp);
+        this.handle(req, resp, RequestType.OPTIONS);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
+        this.handle(req, resp, RequestType.POST);
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPut(req, resp);
+        this.handle(req, resp, RequestType.PUT);
     }
 
     @Override
     protected void doTrace(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doTrace(req, resp);
+        this.handle(req, resp, RequestType.TRACE);
     }
 }

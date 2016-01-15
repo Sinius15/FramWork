@@ -1,40 +1,34 @@
 package jaravel.framework.mvc;
 
-import jaravel.framework.database.DatabaseColumn;
-import jaravel.framework.database.QueryBuilder;
-import jaravel.framework.database.SelectQueryBuilder;
+import jaravel.framework.database.DatabaseCell;
+import jaravel.framework.database.DatabaseRow;
+import jaravel.framework.database.builder.SelectQueryBuilder;
+import jaravel.framework.database.builder.WhereClause;
+import jaravel.framework.database.result.SelectQueryResult;
+import jaravel.framework.database.scheme.DatabaseTableScheme;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.lang.reflect.Field;
 
 /**
  * Created by Sijmen on 12-1-2016.
  */
 public abstract class Model {
 
-    protected String table;
+    public abstract DatabaseTableScheme getTable();
 
-    protected DatabaseColumn[] columns;
+    public DatabaseRow findModel(WhereClause... where) throws IOException {
+        SelectQueryBuilder builder = new SelectQueryBuilder(getTable(), getTable().getColumns());
+        builder.whereAll(where);
+        SelectQueryResult result = (SelectQueryResult) builder.execute();
 
-    protected DatabaseColumn[] primaryKeys = new DatabaseColumn[]{
-            new DatabaseColumn("id", false)
-    };
+        DatabaseRow[] rows = result.getRows();
 
-    protected HashMap<String, String> attributes;
-    protected HashMap<String, String> originalValues;
-
-    /**
-     * Create a new model.
-     */
-    public Model(HashMap<String, String> attributes){
-        this.attributes = attributes;
-    }
-
-    public Model(){
-
-    }
-
-    public QueryBuilder where(HashMap<String, String> attributes){
-        return new SelectQueryBuilder(table, this.columns);
+        if(rows.length > 1)
+            throw new IOException("Found multiple results matching where clause");
+        if(rows.length < 1)
+            throw new IOException("No matching results found.");
+        return rows[0];
     }
 
     public void save(){
@@ -45,37 +39,22 @@ public abstract class Model {
         //todo
     }
 
-    public String get(String key){
-        return attributes.get(key);
+    public void fillMeWithRow(DatabaseRow row) throws IOException {
+        if(!row.getTable().equals(this.getTable()))
+            throw new IOException("Tables do not match.");
+
+        for(DatabaseCell<?> cell : row.getCells()){
+            Field field;
+            try {
+                field = this.getClass().getField(cell.getColumn().getName());
+            } catch (NoSuchFieldException e) {
+                throw new IOException("Could not map database scheme column to model field: " + e.getMessage());
+            }
+            try {
+                field.set(this, cell.getValue());
+            } catch (IllegalAccessException e) {
+                throw new IOException("Could not fill model field '"+field.getName()+"'with DatabaseCell value: " + e.getMessage());
+            }
+        }
     }
-
-    public String get(DatabaseColumn column){
-        if(column == null)
-            throw new IllegalArgumentException("column can not be null.");
-        return attributes.get(column.getName());
-    }
-
-    public void set(String key, String value){
-        attributes.put(key, value);
-    }
-
-    public void set(DatabaseColumn column, String value){
-        if(column == null)
-            throw new IllegalArgumentException("column can not be null.");
-        attributes.put(column.getName(), value);
-    }
-
-    public void fill(HashMap<String, String> attributes){
-        this.attributes.putAll(attributes);
-    }
-
-    public void fillColumns(HashMap<DatabaseColumn, String> attributes){
-        for(DatabaseColumn col : attributes.keySet())
-            this.attributes.put(col.getName(), attributes.get(col));
-    }
-
-
-
-
-
 }

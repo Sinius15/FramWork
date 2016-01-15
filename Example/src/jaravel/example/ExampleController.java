@@ -1,5 +1,6 @@
 package jaravel.example;
 
+import jaravel.example.model.UserModel;
 import jaravel.framework.mvc.Controller;
 import jaravel.framework.web.Request;
 import jaravel.framework.web.Response;
@@ -10,7 +11,9 @@ import jaravel.framework.web.Response;
 public class ExampleController extends Controller {
 
     public Response index(Request request){
-        return new Response("Hello World from Index!");
+        UserModel user = new UserModel(10);
+
+        return new Response("Hello " + user.name);
     }
 
     public Response test(Request request){

@@ -15,13 +15,13 @@ public class Single {
     }
 
     public static Object get(Class clas){
-        if(singletonMap.containsKey(key(clas)))
+        if(has(clas))
             return singletonMap.get(key(clas));
         throw new IllegalArgumentException("Single does not containt a instance of " + clas.getName());
     }
 
     public static Object getOrDefault(Class clas, Object defaultt){
-        if(singletonMap.containsKey(key(clas)))
+        if(has(clas))
             return singletonMap.get(key(clas));
         return defaultt;
     }
@@ -35,7 +35,7 @@ public class Single {
     }
 
     public static void putIfEmpty(Object obj){
-        if(!singletonMap.containsKey(key(obj.getClass())))
+        if(!has(obj.getClass()))
             put(obj);
     }
 
@@ -43,4 +43,7 @@ public class Single {
         return clas.getCanonicalName();
     }
 
+    public static boolean has(Class clas) {
+        return singletonMap.containsKey(key(clas));
+    }
 }

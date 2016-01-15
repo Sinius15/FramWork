@@ -1,6 +1,7 @@
 package jaravel.framework;
 
 import jaravel.framework.database.DatabaseEngine;
+import jaravel.framework.database.connectors.DatabaseConnector;
 import jaravel.framework.database.engines.MySqlEngine;
 import jaravel.framework.routing.Route;
 import jaravel.framework.routing.RouteGroup;
@@ -12,16 +13,22 @@ import jaravel.framework.web.Response;
  */
 public abstract class Jaravel {
 
+
+
     public abstract void init();
     public abstract void initRoutes(RouteGroup router);
 
     private RouteGroup router;
-    private DatabaseEngine engine;
+
+    protected static DatabaseEngine engine;
+    protected static DatabaseConnector connection;
 
     public Jaravel() {
         init();
         if(engine == null)
             engine = new MySqlEngine();
+        if(connection == null)
+            throw new IllegalArgumentException("Database connection not yet initialized.");
         router = new RouteGroup();
         router.name("Root Router Group");
         initRoutes(router);
@@ -50,5 +57,13 @@ public abstract class Jaravel {
 
     public void setDatabaseEngine(DatabaseEngine engine) {
         this.engine = engine;
+    }
+
+    public static DatabaseEngine getDatabaseEngine() {
+        return engine;
+    }
+
+    public static DatabaseConnector getDatabaseConnection() {
+        return connection;
     }
 }
