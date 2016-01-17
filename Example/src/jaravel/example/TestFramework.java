@@ -2,6 +2,7 @@ package jaravel.example;
 
 import jaravel.framework.Jaravel;
 import jaravel.framework.database.connectors.JDBCConnector;
+import jaravel.framework.database.engines.MySqlEngine;
 import jaravel.framework.routing.RouteGroup;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ public class TestFramework extends Jaravel {
     @Override
     public void init() {
         System.out.println("Initialized FramWork");
+        engine = new MySqlEngine();
         try {
             connection = new JDBCConnector("com.mysql.jdbc.Driver");
             connection.connect("jdbc:mysql://localhost:3306/test?user=tester&password=123456&useSSL=false");

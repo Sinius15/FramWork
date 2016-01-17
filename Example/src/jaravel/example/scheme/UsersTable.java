@@ -11,7 +11,7 @@ import java.util.Date;
 public class UsersTable extends DatabaseTableScheme {
 
 //    public static final DatabaseColumnScheme<Integer> id = new DatabaseColumnScheme<>("id", false, true);
-    public static final DatabaseColumnScheme<String> name = new DatabaseColumnScheme<>("name", true);
+    public static final DatabaseColumnScheme<String> name = new DatabaseColumnScheme<>("name", true, "Hello!");
 //    public static final DatabaseColumnScheme<String> email = new DatabaseColumnScheme<>("email");
 //    public static final DatabaseColumnScheme<Date> joinedDate = new DatabaseColumnScheme<>("joined_date");
 

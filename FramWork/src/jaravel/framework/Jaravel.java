@@ -13,8 +13,6 @@ import jaravel.framework.web.Response;
  */
 public abstract class Jaravel {
 
-
-
     public abstract void init();
     public abstract void initRoutes(RouteGroup router);
 
@@ -25,10 +23,6 @@ public abstract class Jaravel {
 
     public Jaravel() {
         init();
-        if(engine == null)
-            engine = new MySqlEngine();
-        if(connection == null)
-            throw new IllegalArgumentException("Database connection not yet initialized.");
         router = new RouteGroup();
         router.name("Root Router Group");
         initRoutes(router);
@@ -53,10 +47,6 @@ public abstract class Jaravel {
 
     public Response abort(int statusCode, String message){
         return new Response(statusCode, message);
-    }
-
-    public void setDatabaseEngine(DatabaseEngine engine) {
-        this.engine = engine;
     }
 
     public static DatabaseEngine getDatabaseEngine() {
