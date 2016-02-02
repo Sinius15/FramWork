@@ -1,5 +1,6 @@
 package jaravel.framework.database.connectors;
 
+import jaravel.framework.Settings;
 import jaravel.framework.database.builder.SelectQueryBuilder;
 import jaravel.framework.database.result.SelectQueryResult;
 
@@ -10,11 +11,13 @@ import java.io.IOException;
  */
 public abstract class DatabaseConnector {
 
-    public DatabaseConnector() {
+    protected Settings settings;
 
+    public DatabaseConnector(Settings settings) {
+        this.settings = settings;
     }
 
-    public abstract void connect(String JDBCStr) throws IOException;
+    public abstract void connect() throws IOException;
 
     public abstract SelectQueryResult executePreparedSelectStatement(SelectQueryBuilder query, String[] arguments) throws IOException;
 

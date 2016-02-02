@@ -8,7 +8,7 @@ import jaravel.framework.database.schema.ModelFactory;
  */
 public abstract class Model {
 
-    protected String tableNamee;
+    protected String tableName;
 
     protected DatabaseColumn[] columns;
 

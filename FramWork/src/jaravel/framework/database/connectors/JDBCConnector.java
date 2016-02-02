@@ -1,6 +1,7 @@
 package jaravel.framework.database.connectors;
 
 import jaravel.framework.Jaravel;
+import jaravel.framework.Settings;
 import jaravel.framework.database.builder.SelectQueryBuilder;
 import jaravel.framework.database.result.SelectQueryResult;
 import jaravel.framework.mvc.Model;
@@ -17,10 +18,11 @@ public class JDBCConnector extends DatabaseConnector {
 
     private Connection connection;
 
-    public JDBCConnector(String driver) throws IOException {
-        super();
+    public JDBCConnector(Settings settings) throws IOException {
+        super(settings);
+        String driver = settings.database_jdbc_driver;
         if(driver == null)
-            throw new IllegalArgumentException("Driver cannot be null");
+            throw new IllegalArgumentException("settings.database_jdbc_driver cannot be null.");
         try{
             Class.forName(driver).newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
@@ -30,7 +32,10 @@ public class JDBCConnector extends DatabaseConnector {
     }
 
     @Override
-    public void connect(String JDBCStr) throws IOException{
+    public void connect() throws IOException{
+        String JDBCStr = settings.database_jdbc_connection;
+        if(JDBCStr == null)
+            throw new IllegalArgumentException("settings.database_jdbc_connection cannot be null");
         try {
             connection = DriverManager.getConnection(JDBCStr);
         } catch (SQLException e) {
