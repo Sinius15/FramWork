@@ -1,7 +1,7 @@
 package jaravel.framework.database.builder;
 
 import jaravel.framework.database.result.QueryResult;
-import jaravel.framework.database.scheme.DatabaseTableScheme;
+import jaravel.framework.mvc.Model;
 
 import java.io.IOException;
 
@@ -10,14 +10,14 @@ import java.io.IOException;
  */
 public abstract class QueryBuilder {
 
-    private DatabaseTableScheme table;
+    private Model model;
 
-    public QueryBuilder(DatabaseTableScheme table) {
-        this.table = table;
+    public QueryBuilder(Model model) {
+        this.model = model;
     }
 
-    public DatabaseTableScheme getTable() {
-        return table;
+    public Model getModel() {
+        return model;
     }
 
     public abstract QueryResult execute() throws IOException;

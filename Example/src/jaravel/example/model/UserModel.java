@@ -1,35 +1,33 @@
 package jaravel.example.model;
 
-import jaravel.example.scheme.UsersTable;
-import jaravel.framework.database.DatabaseRow;
-import jaravel.framework.database.scheme.DatabaseTableScheme;
+import jaravel.framework.database.anns.Column;
 import jaravel.framework.mvc.Model;
 
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Created by Sinius on 13-1-2016.
  */
 public class UserModel extends Model {
 
-    private UsersTable table = new UsersTable();
+    @Column(type = "int", size = 50, decimal = 0, nullable = Column.TRUE, primary = Column.FALSE)
+    public int id;
 
-//    public int id;
+    @Column(size =100)
     public String name;
-//    public String email;
-//    public Date joinedDate;
+
+    @Column(size =80)
+    public String email;
+
+    @Column
+    public Date joinedDate;
 
     public UserModel(int id) {
-        try {
-            DatabaseRow row = this.findModel();
-            this.fillMeWithRow(row);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        super();
     }
 
-    @Override
-    public DatabaseTableScheme getTable() {
-        return table;
+    public UserModel(){
+        super();
     }
 }

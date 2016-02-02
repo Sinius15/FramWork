@@ -18,7 +18,7 @@ public class TestFramework extends Jaravel {
         engine = new MySqlEngine();
         try {
             connection = new JDBCConnector("com.mysql.jdbc.Driver");
-            connection.connect("jdbc:mysql://localhost:3306/test?user=tester&password=123456&useSSL=false");
+//            connection.connect("jdbc:mysql://localhost:3306/test?user=tester&password=123456&useSSL=false");
         } catch (IOException e) {
             e.printStackTrace();
         }

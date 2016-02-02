@@ -67,7 +67,7 @@ public class HttpRequestHandler implements HttpHandler {
 
 
         String responseContent = response.render();
-        httpExchange.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
+        httpExchange.getResponseHeaders().set("Content-type", "text/html; charset=UTF-8");
         httpExchange.sendResponseHeaders(200, responseContent.length());
         OutputStream os = httpExchange.getResponseBody();
         os.write(responseContent.getBytes());

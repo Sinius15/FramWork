@@ -1,11 +1,10 @@
 package jaravel.framework.database.connectors;
 
 import jaravel.framework.Jaravel;
-import jaravel.framework.database.DatabaseCell;
-import jaravel.framework.database.DatabaseRow;
 import jaravel.framework.database.builder.SelectQueryBuilder;
 import jaravel.framework.database.result.SelectQueryResult;
-import jaravel.framework.database.scheme.DatabaseColumnScheme;
+import jaravel.framework.mvc.Model;
+import jaravel.framework.util.ReflectHelper;
 
 import java.io.IOException;
 import java.sql.*;
@@ -63,32 +62,23 @@ public class JDBCConnector extends DatabaseConnector {
             throw new IOException("Could not execute query: " + e.getMessage());
         }
 
-        DatabaseColumnScheme[] cols = query.getSelectColumns();
+        String[] cols = query.getColumns();
 
-        ArrayList<DatabaseRow> rows = new ArrayList<>();
-        query.getSelectColumns();
+        ArrayList<Model> rows = new ArrayList<>();
         try {
             while(set.next()){
-                DatabaseCell<?>[] cells = new DatabaseCell[cols.length];
-                for (int i = 0; i < cols.length; i++) {
-                    DatabaseColumnScheme<?> col = cols[i];
-                    switch (col.getTypeName()) {
-                        case "java.lang.String":
-                            cells[i] = new DatabaseCell<>(
-                                    query.getTable(),
-                                    (DatabaseColumnScheme<String>)col,
-                                    set.getString(col.getName())
-                            );
-                            break;
-                    }
+                Model model = ReflectHelper.getEmptyModel(query.getModel().getClass());
+
+                for(String col : cols){
+                    ReflectHelper.setValue(model, col, set.getObject(col));
                 }
-                rows.add(new DatabaseRow(query.getTable(), cells));
+                rows.add(model);
             }
         } catch (SQLException e) {
             throw new IOException("Could not fetch result from QueryResult: " + e.getMessage());
         }
 
-        return new SelectQueryResult(rows.toArray(new DatabaseRow[rows.size()]));
+        return new SelectQueryResult(rows.toArray(new Model[rows.size()]));
     }
 
 }

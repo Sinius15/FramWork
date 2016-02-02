@@ -3,8 +3,8 @@ package jaravel.framework.database.builder;
 import jaravel.framework.Jaravel;
 import jaravel.framework.database.connectors.DatabaseConnector;
 import jaravel.framework.database.result.QueryResult;
-import jaravel.framework.database.scheme.DatabaseColumnScheme;
-import jaravel.framework.database.scheme.DatabaseTableScheme;
+import jaravel.framework.database.schema.DatabaseColumn;
+import jaravel.framework.mvc.Model;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,16 +15,16 @@ import java.util.Collections;
  */
 public class SelectQueryBuilder extends QueryBuilder {
 
-    protected DatabaseColumnScheme[] selectColumns;
+    protected String[] columns;
     protected ArrayList<WhereClause<?>> whereClauses;
 
-    public SelectQueryBuilder(DatabaseTableScheme table, DatabaseColumnScheme[] selectColumns) {
-        super(table);
-        this.selectColumns = selectColumns;
+    public SelectQueryBuilder(Model model, String[] columns) {
+        super(model);
+        this.columns = columns;
     }
 
-    public DatabaseColumnScheme[] getSelectColumns() {
-        return selectColumns;
+    public String[] getColumns() {
+        return columns;
     }
 
     public void where(WhereClause<?> clause) {
