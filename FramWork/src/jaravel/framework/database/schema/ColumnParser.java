@@ -1,6 +1,5 @@
-package jaravel.framework.database.anns;
+package jaravel.framework.database.schema;
 
-import jaravel.framework.database.schema.DatabaseColumn;
 import jaravel.framework.database.types.DatabaseDataTypeProviderManager;
 import jaravel.framework.mvc.Model;
 

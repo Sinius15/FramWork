@@ -1,6 +1,6 @@
 package jaravel.framework.database.types;
 
-import jaravel.framework.database.anns.Column;
+import jaravel.framework.database.schema.Column;
 
 import java.util.HashMap;
 

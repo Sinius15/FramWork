@@ -1,6 +1,6 @@
 package jaravel.framework.database.connectors;
 
-import jaravel.framework.Settings;
+import jaravel.framework.util.settings.Settings;
 import jaravel.framework.database.builder.SelectQueryBuilder;
 import jaravel.framework.database.result.SelectQueryResult;
 

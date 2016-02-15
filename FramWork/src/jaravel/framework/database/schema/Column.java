@@ -1,4 +1,4 @@
-package jaravel.framework.database.anns;
+package jaravel.framework.database.schema;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

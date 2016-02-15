@@ -3,14 +3,14 @@ package jaravel.framework;
 import jaravel.framework.database.DatabaseEngine;
 import jaravel.framework.database.connectors.DatabaseConnector;
 import jaravel.framework.database.connectors.JDBCConnector;
-import jaravel.framework.database.engines.MySqlEngine;
 import jaravel.framework.routing.Route;
 import jaravel.framework.routing.RouteGroup;
-import jaravel.framework.util.ReflectHelper;
+import jaravel.framework.util.DependencyInjector;
+import jaravel.framework.util.settings.Settings;
 import jaravel.framework.web.Request;
 import jaravel.framework.web.Response;
-import sun.plugin.javascript.ReflectUtil;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -26,10 +26,14 @@ public abstract class Jaravel {
     protected static DatabaseEngine engine;
     protected static DatabaseConnector connection;
 
+    public static DependencyInjector dependencyInjector;
+
     private Settings settings;
 
     public Jaravel() {
         try {
+            dependencyInjector = new DependencyInjector();
+
             init();
 
             settings = createSettings();
@@ -39,11 +43,16 @@ public abstract class Jaravel {
             initRoutes(router);
             router.finishSetup();
 
-            engine = (DatabaseEngine) ReflectHelper.getEmptyObject(settings.database_engine);
+            dependencyInjector.putValue(Settings.class, settings);
+            dependencyInjector.putValue(DatabaseConnector.class, connection);
+            dependencyInjector.putValue(DependencyInjector.class, dependencyInjector);
 
-            connection = (JDBCConnector) ReflectHelper.getEmptyObject(settings.database_connector,
-                    new Class<?>[] {Settings.class},
-                    new Object[]{settings});
+            engine = (DatabaseEngine) dependencyInjector.getObjectMagicly(settings.database_engine) ;
+            dependencyInjector.putValue(DatabaseEngine.class, engine);
+
+            connection = (DatabaseConnector) dependencyInjector.getObjectMagicly(settings.database_connector);
+            dependencyInjector.putValue(DatabaseConnector.class, connection);
+
             if(connection == null)
                 throw new IOException("No database connection.");
 
@@ -75,7 +84,7 @@ public abstract class Jaravel {
     }
 
     public Settings createSettings(){
-        return new Settings();
+        return new Settings(new File("res/settings.json"));
     }
 
     public static DatabaseEngine getDatabaseEngine() {

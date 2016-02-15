@@ -21,6 +21,7 @@ public class SelectQueryBuilder extends QueryBuilder {
     public SelectQueryBuilder(Model model, String[] columns) {
         super(model);
         this.columns = columns;
+        this.whereClauses = new ArrayList<>();
     }
 
     public String[] getColumns() {
@@ -33,6 +34,10 @@ public class SelectQueryBuilder extends QueryBuilder {
 
     public void whereAll(WhereClause<?>[] clauses){
         Collections.addAll(whereClauses, clauses);
+    }
+
+    public ArrayList<WhereClause<?>> getWhereClauses() {
+        return whereClauses;
     }
 
     @Override

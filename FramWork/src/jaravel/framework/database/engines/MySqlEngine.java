@@ -2,10 +2,12 @@ package jaravel.framework.database.engines;
 
 import jaravel.framework.database.DatabaseEngine;
 import jaravel.framework.database.builder.SelectQueryBuilder;
+import jaravel.framework.database.builder.WhereClause;
 import jaravel.framework.database.types.DatabaseDataType;
 import jaravel.framework.database.types.DatabaseDataTypeInitializer;
 import jaravel.framework.database.types.DatabaseDataTypeProvider;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringJoiner;
 
@@ -33,6 +35,24 @@ public class MySqlEngine extends DatabaseEngine{
         builder.append(leftEscape);
         builder.append(q.getModel().getTableName());
         builder.append(rightEscape);
+
+        ArrayList<WhereClause<?>> whereClauses = q.getWhereClauses();
+        if(whereClauses != null && !whereClauses.isEmpty()){
+
+            for(WhereClause<?> clause : whereClauses){
+                builder.append(" WHERE ");
+                builder.append(leftEscape);
+                builder.append(clause.column.getName());
+                builder.append(rightEscape);
+                builder.append(" = ");
+                //todo: prepared statmente
+                builder.append("'");
+                builder.append(clause.value);
+                builder.append("'");
+            }
+
+
+        }
 
         return builder.toString();
     }

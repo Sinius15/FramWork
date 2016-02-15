@@ -1,11 +1,11 @@
 package jaravel.framework.database.connectors;
 
 import jaravel.framework.Jaravel;
-import jaravel.framework.Settings;
+import jaravel.framework.util.settings.Settings;
 import jaravel.framework.database.builder.SelectQueryBuilder;
 import jaravel.framework.database.result.SelectQueryResult;
 import jaravel.framework.mvc.Model;
-import jaravel.framework.util.ReflectHelper;
+import jaravel.framework.util.DependencyInjector;
 
 import java.io.IOException;
 import java.sql.*;
@@ -18,8 +18,11 @@ public class JDBCConnector extends DatabaseConnector {
 
     private Connection connection;
 
-    public JDBCConnector(Settings settings) throws IOException {
+    private DependencyInjector injector;
+
+    public JDBCConnector(Settings settings, DependencyInjector injector) throws IOException {
         super(settings);
+        this.injector = injector;
         String driver = settings.database_jdbc_driver;
         if(driver == null)
             throw new IllegalArgumentException("settings.database_jdbc_driver cannot be null.");
@@ -47,22 +50,23 @@ public class JDBCConnector extends DatabaseConnector {
     public SelectQueryResult executePreparedSelectStatement(SelectQueryBuilder query, String[] arguments) throws IOException {
         String queryStr = Jaravel.getDatabaseEngine().compile(query);
 
-        PreparedStatement state;
+        PreparedStatement statement;
         try {
-            state = connection.prepareStatement(queryStr);
+            statement = connection.prepareStatement(queryStr);
         } catch (SQLException e) {
             throw new IOException("Could not create statement: " + e.getMessage());
         }
         try {
             for (int i = 0; i < arguments.length; i++) {
-                state.setString(i, arguments[i]);
+                statement.setString(i, arguments[i]);
             }
         }catch (SQLException e){
             throw new IOException("Could not add prepared statements: " + e.getMessage());
         }
+            System.out.println(statement.toString());
         ResultSet set;
         try {
-            set = state.executeQuery();
+            set = statement.executeQuery();
         } catch (SQLException e) {
             throw new IOException("Could not execute query: " + e.getMessage());
         }
@@ -72,11 +76,11 @@ public class JDBCConnector extends DatabaseConnector {
         ArrayList<Model> rows = new ArrayList<>();
         try {
             while(set.next()){
-                Model model = ReflectHelper.getEmptyModel(query.getModel().getClass());
+                Model model = (Model) injector.getObjectMagicly(query.getModel().getClass());
 
-                for(String col : cols){
-                    ReflectHelper.setValue(model, col, set.getObject(col));
-                }
+                for(String col : cols)
+                    DependencyInjector.setValue(model, col, set.getObject(col));
+
                 rows.add(model);
             }
         } catch (SQLException e) {

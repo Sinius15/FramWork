@@ -1,7 +1,14 @@
 package jaravel.framework.mvc;
 
+import jaravel.framework.database.builder.SelectQueryBuilder;
+import jaravel.framework.database.builder.WhereClause;
+import jaravel.framework.database.result.SelectQueryResult;
 import jaravel.framework.database.schema.DatabaseColumn;
 import jaravel.framework.database.schema.ModelFactory;
+import jaravel.framework.util.DependencyInjector;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by Sijmen on 12-1-2016.
@@ -10,21 +17,21 @@ public abstract class Model {
 
     protected String tableName;
 
-    protected DatabaseColumn[] columns;
+    private DatabaseColumn[] columns;
 
-    public Model(){
+    public Model() {
         ModelFactory factory = new ModelFactory();
         this.columns = factory.makeColumns(this);
-        if(tableName == null)
+        if (tableName == null)
             tableName = factory.makeTableName(this);
     }
 
 
-    public void delete(){
+    public void delete() {
         //todo
     }
 
-    public void save(){
+    public void save() {
         //todo
     }
 
@@ -32,37 +39,37 @@ public abstract class Model {
         return tableName;
     }
 
-//    public DatabaseRow findModel(WhereClause... where) throws IOException {
-//        SelectQueryBuilder builder = new SelectQueryBuilder(getTable(), getTable().getColumns());
-//        builder.whereAll(where);
-//        SelectQueryResult result = (SelectQueryResult) builder.execute();
-//
-//        DatabaseRow[] rows = result.getRows();
-//
-//        if(rows.length > 1)
-//            throw new IOException("Found multiple results matching where clause");
-//        if(rows.length < 1)
-//            throw new IOException("No matching results found.");
-//        return rows[0];
-//    }
+    public DatabaseColumn[] getColumns() {
+        return columns;
+    }
 
+    public String[] getColumnNames() {
+        String[] out = new String[getColumns().length];
+        for (int i = 0; i < getColumns().length; i++) {
+            DatabaseColumn col = getColumns()[i];
+            out[i] = col.getName();
+        }
+        return out;
+    }
 
-//    public void fillMeWithRow(DatabaseRow row) throws IOException {
-//        if(!row.getTable().equals(this.getTable()))
-//            throw new IOException("Tables do not match.");
-//
-//        for(DatabaseCell<?> cell : row.getCells()){
-//            Field field;
-//            try {
-//                field = this.getClass().getField(cell.getColumn().getName());
-//            } catch (NoSuchFieldException e) {
-//                throw new IOException("Could not map database scheme column to model field: " + e.getMessage());
-//            }
-//            try {
-//                field.set(this, cell.getValue());
-//            } catch (IllegalAccessException e) {
-//                throw new IOException("Could not fill model field '"+field.getName()+"'with DatabaseCell value: " + e.getMessage());
-//            }
-//        }
-//    }
+    public void inflate(WhereClause<?>... where) throws IOException {
+        SelectQueryBuilder builder = new SelectQueryBuilder(this, this.getColumnNames());
+        builder.whereAll(where);
+        SelectQueryResult result = (SelectQueryResult) builder.execute();
+
+        Model[] rows = result.getRows();
+        notEmpty(rows.length);
+        Model row = rows[0];
+
+        for(DatabaseColumn column : getColumns()){
+            DependencyInjector.setValue(this, column.getName(), DependencyInjector.getValue(row, column.getName()));
+        }
+    }
+
+    protected void notEmpty(int length) throws IOException {
+        if (length > 1)
+            throw new IOException("Found to many resulsts.");
+        if (length < 1)
+            throw new IOException("No matching results found.");
+    };
 }

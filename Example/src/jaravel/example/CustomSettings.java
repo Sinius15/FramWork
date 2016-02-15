@@ -1,6 +1,8 @@
 package jaravel.example;
 
-import jaravel.framework.Settings;
+import jaravel.framework.util.settings.Settings;
+
+import java.io.File;
 
 /**
  * Created by Sijmen on 2-2-2016.
@@ -8,7 +10,8 @@ import jaravel.framework.Settings;
 public class CustomSettings extends Settings {
 
     public CustomSettings(){
-        database_jdbc_connection = "jdbc:mysql://localhost:3306/test?user=tester&password=123456&useSSL=false";
+        super(new File("Example/res/settings.json"));
+        database_jdbc_connection = (String) setting("database_connection");
     }
 
 }

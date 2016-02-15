@@ -1,7 +1,5 @@
 package jaravel.framework.database.schema;
 
-import jaravel.framework.database.anns.Column;
-import jaravel.framework.database.anns.ColumnParser;
 import jaravel.framework.mvc.Model;
 
 import java.lang.reflect.Field;

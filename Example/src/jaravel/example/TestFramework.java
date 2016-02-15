@@ -1,12 +1,8 @@
 package jaravel.example;
 
 import jaravel.framework.Jaravel;
-import jaravel.framework.Settings;
-import jaravel.framework.database.connectors.JDBCConnector;
-import jaravel.framework.database.engines.MySqlEngine;
+import jaravel.framework.util.settings.Settings;
 import jaravel.framework.routing.RouteGroup;
-
-import java.io.IOException;
 
 /**
  * Created by Sijmen on 12-1-2016.
